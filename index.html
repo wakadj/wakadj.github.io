@@ -74,7 +74,7 @@ asr.interimResults = true; // 途中結果出力をオン
 asr.continuous = true; // 継続入力をオン
 
 let output = ''; // 出力
-
+let wakepoint = '';
 // 認識結果が出力されたときのイベントハンドラ
 asr.onresult = function(event){
     let transcript = event.results[event.resultIndex][0].transcript; // 結果文字列
@@ -86,6 +86,9 @@ asr.onresult = function(event){
 
     if (event.results[event.resultIndex].isFinal) { // 結果が確定（Final）のとき
       if(new RegExp(wake_word).test(transcript_previous)){
+        wakepoint = wake_word;
+      }
+      if(typeof wakepoint != 'undefined'){
         asr.abort(); // 音声認識を停止
         let answer;
         let webpage;
