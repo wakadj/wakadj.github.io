@@ -119,21 +119,6 @@ asr.onresult = function(event){
           }
           asr.start(); // 音声認識を再開
         }
-        if (bcounter == 2) {
-          bcounter -= 2;
-          resultOutput.innerHTML = "怒りました。もう話しません";
-          tts.text = "怒りました。もう話しません";
-          speechSynthesis.speak(tts); // 再生
-          let dt1 = new Date().getTime();
-          let dt2 = new Date().getTime();
-          while (dt2 < dt1 + 1000){
-            dt2 = new Date().getTime();
-          }
-          resultOutput.innerHTML = "嘘ですよ";
-          tts.text = "嘘ですよ";
-          speechSynthesis.speak(tts); // 再生;
-        }
-
         speechSynthesis.speak(tts); // 再生
         
       }
@@ -141,6 +126,20 @@ asr.onresult = function(event){
         output_not_final = '<span style="color:#ddd;">' + transcript + '</span>';
     }
     resultOutput.innerHTML = output + output_not_final;
+    if (bcounter == 2) {
+      bcounter -= 2;
+      resultOutput.innerHTML = "怒りました。もう話しません";
+      tts.text = "怒りました。もう話しません";
+      speechSynthesis.speak(tts); // 再生
+      let dt1 = new Date().getTime();
+      let dt2 = new Date().getTime();
+      while (dt2 < dt1 + 1000){
+        dt2 = new Date().getTime();
+      }
+      resultOutput.innerHTML = "嘘ですよ";
+      tts.text = "嘘ですよ";
+      speechSynthesis.speak(tts); // 再生;
+    }
 }
 // 開始ボタンのイベントハンドラ
 startButton.addEventListener('click', function() {
