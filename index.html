@@ -88,7 +88,7 @@ asr.onresult = function(event){
       if(new RegExp(wake_word).test(transcript_previous)){
         wakepoint = wake_word;
       }
-      if(typeof wakepoint != 'undefined'){
+      if(wakepoint == "OK.*コンピューター"){
         asr.abort(); // 音声認識を停止
         let answer;
         let webpage;
