@@ -139,10 +139,6 @@ function sadtopleasure(){
 
   animation.play();
 };
-function changeColor(target){
-  var obj = document.getElementById(target);
-  obj.style.backgroundColor = '#ff0000';  //背景色を赤にする
-}
 //住所の情報を表示する
 function showAddress(answerp) {
   var appid = 'dj00aiZpPWpPVnMwZEJyc09ZMiZzPWNvbnN1bWVyc2VjcmV0Jng9NTc-';
@@ -411,6 +407,8 @@ asr.onresult = function(event){
           tts.pitch -= 0.2;
         } else if (answer == "声を高くします") {
           tts.pitch += 0.2;
+        } else if (answer == "ばいばい") {
+          wakepoint = "";
         } else if (answer == "和歌山県の今から60分の天気情報を表示します") {
           answerp = "和歌山";
           setTimeout(
