@@ -6,7 +6,7 @@
 <meta http-equiv="Content-Script-Type" content="text/javascript">
 <title>Spoken Dialog by Javascript</title>
 </head>
-<body bgcolor = "silver"><font size = "4">
+<body id = "target" bgcolor = "silver"><font size = "4">
 
 <h1><font color = "black">課題：音声対話</font></h1>
 
@@ -20,9 +20,198 @@
 </p>
 
 <script>
+var answerp;
+var psad;
+var sadp;
+var wsad;
+var wpleasure;
+function pleasure(){
 
-  // この中身を書いてください。
+  const content1 = document.getElementById('target');
 
+  let keyframeeffect = new KeyframeEffect(
+    content1,
+    {
+      backgroundColor: [ '#ffb6c1', '#f08080', '#f08080', '#ffb6c1'],
+      offset: [ 0, 0.3, 0.6, 1],
+      easing: [ 'ease', 'linear', 'ease', 'linear']
+    },
+    {
+      duration:10000,
+      iterations: Infinity
+    }
+  );
+
+  let animation = new Animation(keyframeeffect);
+
+  animation.play();
+};
+function sad(){
+
+  const content2 = document.getElementById('target');
+
+  let keyframeeffect = new KeyframeEffect(
+    content2,
+    {
+      backgroundColor: [ '#6495ed', '#7b68ee', '#00008b', '#7b68ee', '#6495ed'],
+      offset: [ 0, 0.4, 0.6, 0.8, 1],
+      easing: [ 'ease', 'linear', 'ease', 'linear']
+    },
+    {
+      duration:10000,
+      iterations: Infinity
+    }
+  );
+
+  let animation = new Animation(keyframeeffect);
+
+  animation.play();
+};
+function pleasuret(){
+
+  const content3 = document.getElementById('target');
+
+  let keyframeeffect = new KeyframeEffect(
+    content3,
+    {
+      backgroundColor: [ '#c0c0c0', '#ffb6c1'],
+    },
+    {
+      duration:1000
+    }
+  );
+
+  let animation = new Animation(keyframeeffect);
+
+  animation.play();
+};
+function sadt(){
+
+  const content4 = document.getElementById('target');
+
+  let keyframeeffect = new KeyframeEffect(
+    content4,
+    {
+      backgroundColor: [ '#c0c0c0', '#6495ed'],
+    },
+    {
+      duration:1000
+    }
+  );
+
+  let animation = new Animation(keyframeeffect);
+
+  animation.play();
+};
+function pleasuretosad(){
+
+  const content5 = document.getElementById('target');
+
+  let keyframeeffect = new KeyframeEffect(
+    content5,
+    {
+      backgroundColor: ['#ffb6c1', '#6495ed'],
+    },
+    {
+      duration:500,
+    }
+  );
+
+  let animation = new Animation(keyframeeffect);
+
+  animation.play();
+};
+function sadtopleasure(){
+
+  const content6 = document.getElementById('target');
+
+  let keyframeeffect = new KeyframeEffect(
+    content6,
+    {
+      backgroundColor: ['#6495ed', '#ffb6c1'],
+    },
+    {
+      duration:500,
+    }
+  );
+
+  let animation = new Animation(keyframeeffect);
+
+  animation.play();
+};
+function changeColor(target){
+  var obj = document.getElementById(target);
+  obj.style.backgroundColor = '#ff0000';  //背景色を赤にする
+}
+//住所の情報を表示する
+function showAddress(answerp) {
+  var appid = 'dj00aiZpPWpPVnMwZEJyc09ZMiZzPWNvbnN1bWVyc2VjcmV0Jng9NTc-';
+  var url = "https://map.yahooapis.jp/geocode/V1/geoCoder?appid=" + appid + "&query=" + encodeURI( answerp ) + "&output=json&callback=showResult";
+  callJSONP( url );
+}
+
+//JSONPを実行する関数
+function callJSONP(url) {
+  console.log(url);
+  var target = document.createElement('script');
+  target.charset = 'utf-8';
+  target.src = url;
+  document.body.appendChild(target);
+}
+
+//JSONPの結果として実行される関数
+function showResult( result ) {
+  let output = '';
+
+  //console.log(result);
+  console.log(result.Feature);
+  for(let i = 0; i < result.Feature.length; i++){
+    console.log(result.Feature[i]);
+    let name = result.Feature[i].Name;
+    var location = result.Feature[i].Geometry.Coordinates;//show関数以外で定義してweatherに入れる
+    console.log(location);
+  }
+  showWeather(location);
+}
+
+function showWeather(location) {
+  var appid = 'dj00aiZpPWpPVnMwZEJyc09ZMiZzPWNvbnN1bWVyc2VjcmV0Jng9NTc-';
+  var url = "https://map.yahooapis.jp/weather/V1/place?appid=" + appid + "&coordinates=" + encodeURI( location ) + "&output=json&callback=showResultW";
+  callJSONPW( url );
+}
+
+//JSONPを実行する関数
+function callJSONPW(url) {
+  console.log(url);
+  var target = document.createElement('script');
+  target.charset = 'utf-8';
+  target.src = url;
+  document.body.appendChild(target);
+}
+
+//JSONPの結果として実行される関数
+function showResultW( result ) {
+  let output = '';
+
+  console.log(result);
+  
+  if(result.ResultInfo.Count > 0){
+  let name = result.Feature[0].Name;
+  console.log(name);
+  output += "<h2>" + answerp + "の今から60分の天気情報" + "</h2>";
+  
+  for(let i=0; i < result.Feature[0].Property.WeatherList.Weather.length; i++){
+    let weather_type = result.Feature[0].Property.WeatherList.Weather[i].Type;
+    let weather_date = result.Feature[0].Property.WeatherList.Weather[i].Date;
+    let weather_rainfall = result.Feature[0].Property.WeatherList.Weather[i].Rainfall;
+    output += weather_type + "/" + weather_date + "/" + weather_rainfall + "<br>";
+  }
+  }else{
+    output = "not found";
+  }
+  resultOutput.innerHTML = output;
+  
+}
 // ウエイクワードの定義
 var wake_word = "OK.*コンピューター";
 
@@ -32,6 +221,9 @@ var response = {
     ".*何歳.*":["え、わたし、何歳にみえますか",],
     ".*元気.*":["元気ですよー",],
     ".*好きな.*食べ物.*":["焼肉です",],
+    ".*かっこいいね.*":["照れますね",],
+    ".*可愛いね.*":["ありがとうございます",],
+    ".*優秀だね.*":["ありがとうございます",],
     ".*好きな.*人.*":["秘密です",],
     ".*誕生日.*":["1月1日です",],
     ".*身長.*":["160センチメートルです",],
@@ -49,11 +241,16 @@ var response = {
     ".*小さく.*喋って.*":["声を小さくします",],
     ".*高く.*喋って.*":["声を高くします",],
     ".*低く.*喋って.*":["声を低くします",],
-    ".*和歌山.*天気.*": ["和歌山県の天気予報を表示します", "https://weather.yahoo.co.jp/weather/jp/30/"],
-    ".*大阪.*天気.*": ["大阪府の天気予報を表示します", "https://weather.yahoo.co.jp/weather/jp/27/"],
-    ".*京都.*天気.*": ["京都府の天気予報を表示します", "https://weather.yahoo.co.jp/weather/jp/26/"],
-    ".*奈良.*天気.*": ["奈良県の天気予報を表示します", "https://weather.yahoo.co.jp/weather/jp/29/"],
-    ".*兵庫.*天気.*": ["兵庫県の天気予報を表示します", "https://weather.yahoo.co.jp/weather/jp/28/"]
+    ".*和歌山.*天気予報.*": ["和歌山県の今から60分の天気情報を表示します", ""],
+    ".*大阪.*天気予報.*": ["大阪府の今から60分の天気情報を表示します", ""],
+    ".*京都.*天気予報.*": ["京都府の今から60分の天気情報を表示します", ""],
+    ".*奈良.*天気予報.*": ["奈良県の今から60分の天気情報を表示します", ""],
+    ".*兵庫.*天気予報.*": ["兵庫県の今から60分の天気情報を表示します", ""],
+    ".*和歌山.*天気.*サイト.*": ["和歌山県の天気予報を表示します", "https://weather.yahoo.co.jp/weather/jp/30/"],
+    ".*大阪.*天気.*サイト.*": ["大阪府の天気予報を表示します", "https://weather.yahoo.co.jp/weather/jp/27/"],
+    ".*京都.*天気.*サイト.*": ["京都府の天気予報を表示します", "https://weather.yahoo.co.jp/weather/jp/26/"],
+    ".*奈良.*天気.*サイト.*": ["奈良県の天気予報を表示します", "https://weather.yahoo.co.jp/weather/jp/29/"],
+    ".*兵庫.*天気.*サイト.*": ["兵庫県の天気予報を表示します", "https://weather.yahoo.co.jp/weather/jp/28/"]
 };
     
 const startButton = document.querySelector('#startButton'); // 開始ボタン
@@ -98,6 +295,7 @@ asr.onresult = function(event){
         asr.abort(); // 音声認識を停止
         let answer;
         let webpage;
+        let forecast;
         
         let keys = Object.keys(response);
         keys.forEach(function(key) {
@@ -110,11 +308,100 @@ asr.onresult = function(event){
           }
         });
 
-        if(typeof answer == 'undefined'){
-          answer = "ごめんなさい。わかりません。";
-        }
         if (answer == "ゆっくりしゃべります") {
           tts.rate -= 0.2;
+        } else if (answer == "ありがとうございます") {
+          if (sadp == 1) {
+            sadtopleasure();
+            setTimeout(
+              function () {
+                pleasure();
+              }, 
+              "500"
+            );
+            sadp = 0;
+            psad = 1;
+            wpleasure = 1;
+          } else if (wpleasure != 1){
+            pleasuret();
+            setTimeout(
+              function () {
+                pleasure();
+              }, 
+              "1000"
+            );
+            psad = 1;
+            wpleasure = 1;
+          }
+        } else if (answer == "照れますね") {
+          if (sadp == 1) {
+            sadtopleasure();
+            setTimeout(
+              function () {
+                pleasure();
+              }, 
+              "500"
+            );
+            sadp = 0;
+            psad = 1;
+            wpleasure = 1;
+          } else if (wpleasure != 1) {
+            pleasuret();
+            setTimeout(
+              function () {
+                pleasure();
+              }, 
+              "1000"
+            );
+            psad = 1;
+            wpleasure = 1;
+          }
+        } else if (answer == "ひどいです") {
+          if (psad == 1) {
+            pleasuretosad();
+            setTimeout(
+              function () {
+                sad();
+              }, 
+              "500"
+            );
+            sadp = 1;
+            psad = 0;
+            wsad = 1;
+          } else if (wsad != 1) {
+            sadt();
+            setTimeout(
+              function () {
+                sad();
+              }, 
+              "1000"
+            );
+            sadp = 1;
+            wsad = 1;
+          }
+        } else if (answer == "なんてこと言うんですか") {
+          if (psad == 1) {
+            pleasuretosad();
+            setTimeout(
+              function () {
+                sad();
+              }, 
+              "500"
+            );
+            sadp = 1;
+            psad = 0;
+            wsad = 1;
+          } else if (wsad != 1) {
+            sadt();
+            setTimeout(
+              function () {
+                sad();
+              }, 
+              "1000"
+            );
+            sadp = 1;
+            wsad = 1;
+          }
         } else if (answer == "早くしゃべります") {
           tts.rate += 0.5;
         } else if (answer == "声を小さくします") {
@@ -125,6 +412,48 @@ asr.onresult = function(event){
           tts.pitch -= 0.2;
         } else if (answer == "声を高くします") {
           tts.pitch += 0.2;
+        } else if (answer == "和歌山県の今から60分の天気情報を表示します") {
+          answerp = "和歌山";
+          setTimeout(
+            function () {
+              showAddress(answerp);
+            }, 
+            "4500"
+          );
+        } else if (answer == "大阪府の今から60分の天気情報を表示します") {
+          answerp = "大阪";
+          setTimeout(
+            function () {
+              showAddress(answerp);
+            }, 
+            "4500"
+          );
+        } else if (answer == "京都府の今から60分の天気情報を表示します") {
+          answerp = "京都";
+          setTimeout(
+            function () {
+              showAddress(answerp);
+            }, 
+            "4500"
+          );
+        } else if (answer == "奈良県の今から60分の天気情報を表示します") {
+          answerp = "奈良";
+          setTimeout(
+            function () {
+              showAddress(answerp);
+            }, 
+            "4500"
+          );
+        } else if (answer == "兵庫県の今から60分の天気情報を表示します") {
+          answerp = "兵庫";
+          setTimeout(
+            function () {
+              showAddress(answerp);
+            }, 
+            "4500"
+          );
+        } else if(typeof answer == 'undefined'){
+          answer = "ごめんなさい。わかりません。";
         }
   
         output += transcript + ' => ' + answer + '<br>';
@@ -157,5 +486,9 @@ stopButton.addEventListener('click', function() {
 })
 </script>
 
+<!-- Yahoo!JAPANのAPIを利用したときはクレジット表記が必要 -->
+<p>
+Web Services by Yahoo! JAPAN （https://developer.yahoo.co.jp/sitemap/）
+</p>
 </font></body>
 </html>
