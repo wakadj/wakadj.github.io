@@ -1,0 +1,34 @@
+.volume p{
+	float:left;
+	margin:5px;
+}
+.rate p{
+	float:left;
+	margin:5px;
+}
+.pitch p{
+	float:left;
+	margin:5px;
+}
+.volume input{
+	position:relative;
+	top:8px;
+}
+.rate input{
+	position:relative;
+	top:8px;
+}
+.pitch input{
+	position:relative;
+	top:8px;
+}
+.clear{
+	clear: both;
+}
+.backimg {
+	max-width:600px;
+}
+.backimg img {
+	opacity:0.5;
+	width:100%;
+}
