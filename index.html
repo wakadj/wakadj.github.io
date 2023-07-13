@@ -5,29 +5,63 @@
 <meta http-equiv="Content-Style-Type" content="text/css">
 <meta http-equiv="Content-Script-Type" content="text/javascript">
 <title>Spoken Dialog by Javascript</title>
+<link rel="stylesheet" type="text/css" href = "img.css"/>
 </head>
 <body id = "target" bgcolor = "silver"><font size = "4">
-
 <h1><font color = "black">課題：音声対話</font></h1>
+<p>OKコンピュータといってから話しかけてください</p>
+<div class = "volume">
+  <p id = "vo">音量</p>
+  <input type="range" id="vSlideBar" min="0" max="1" step="0.1">
+</div>
+<div class="clear"></div>
+<div class = "rate">
+  <p id = "ra">速度</p>
+  <input type="range" id="rSlideBar" min="0" max="10" step="1">
+</div>
+<div class="clear"></div>
+<div class = "pitch">
+  <p id = "pi">音程</p>
+  <input type="range" id="pSlideBar" min="0" max="2" step="0.2">
+</div>
+<div class="clear"></div>
 
 <p>
 <button id="startButton"><font size = "5" color = "red">start</font></button>
 <button id="stopButton"><font size = "5" color = "blue">stop</font></button>
 </p>
-
 <p>
 <div id="resultOutput"></div>
 </p>
-
+<div id = "image" class = "backimg" >
+  <img id = "pic" src="sleep.jpg" height = "50%">
+</div>
 <script>
+const vSlideBarElement = document.getElementById('vSlideBar');
+const rSlideBarElement = document.getElementById('rSlideBar');
+const pSlideBarElement = document.getElementById('pSlideBar');
 var answerp;
 var psad;
 var sadp;
 var wsad;
 var wpleasure;
+var img = ["normal.jpg", "mouthopen1.jpg", "mouthopen2.jpg"];
+var count = -1;
+var changetime = 0;
+function picChange() {
+  count++;
+  if (count == img.length) {
+    count = 0;
+  }
+  document.getElementById("pic").src = img[count];
+  changetime += 150;
+  if (changetime < 3000) {
+    setTimeout("picChange()", 150);
+  }
+}
 function pleasure(){
 
-  const content1 = document.getElementById('target');
+  const content1 = document.getElementById('image');
 
   let keyframeeffect = new KeyframeEffect(
     content1,
@@ -37,6 +71,7 @@ function pleasure(){
       easing: [ 'ease', 'linear', 'ease', 'linear']
     },
     {
+      delay:1000,
       duration:10000,
       iterations: Infinity
     }
@@ -48,7 +83,7 @@ function pleasure(){
 };
 function sad(){
 
-  const content2 = document.getElementById('target');
+  const content2 = document.getElementById('image');
 
   let keyframeeffect = new KeyframeEffect(
     content2,
@@ -58,6 +93,7 @@ function sad(){
       easing: [ 'ease', 'linear', 'ease', 'linear']
     },
     {
+      delay:1000,
       duration:10000,
       iterations: Infinity
     }
@@ -69,7 +105,7 @@ function sad(){
 };
 function pleasuret(){
 
-  const content3 = document.getElementById('target');
+  const content3 = document.getElementById('image');
 
   let keyframeeffect = new KeyframeEffect(
     content3,
@@ -87,7 +123,7 @@ function pleasuret(){
 };
 function sadt(){
 
-  const content4 = document.getElementById('target');
+  const content4 = document.getElementById('image');
 
   let keyframeeffect = new KeyframeEffect(
     content4,
@@ -105,7 +141,7 @@ function sadt(){
 };
 function pleasuretosad(){
 
-  const content5 = document.getElementById('target');
+  const content5 = document.getElementById('image');
 
   let keyframeeffect = new KeyframeEffect(
     content5,
@@ -113,7 +149,7 @@ function pleasuretosad(){
       backgroundColor: ['#ffb6c1', '#6495ed'],
     },
     {
-      duration:500,
+      duration:1000,
     }
   );
 
@@ -123,7 +159,7 @@ function pleasuretosad(){
 };
 function sadtopleasure(){
 
-  const content6 = document.getElementById('target');
+  const content6 = document.getElementById('image');
 
   let keyframeeffect = new KeyframeEffect(
     content6,
@@ -131,7 +167,7 @@ function sadtopleasure(){
       backgroundColor: ['#6495ed', '#ffb6c1'],
     },
     {
-      duration:500,
+      duration:1000,
     }
   );
 
@@ -141,9 +177,14 @@ function sadtopleasure(){
 };
 //住所の情報を表示する
 function showAddress(answerp) {
-  var appid = 'dj00aiZpPWpPVnMwZEJyc09ZMiZzPWNvbnN1bWVyc2VjcmV0Jng9NTc-';
-  var url = "https://map.yahooapis.jp/geocode/V1/geoCoder?appid=" + appid + "&query=" + encodeURI( answerp ) + "&output=json&callback=showResult";
-  callJSONP( url );
+  setTimeout(
+    function () {
+      var appid = 'dj00aiZpPWpPVnMwZEJyc09ZMiZzPWNvbnN1bWVyc2VjcmV0Jng9NTc-';
+      var url = "https://map.yahooapis.jp/geocode/V1/geoCoder?appid=" + appid + "&query=" + encodeURI( answerp ) + "&output=json&callback=showResult";
+      callJSONP( url );
+    }, 
+    "4500"
+  );
 }
 
 //JSONPを実行する関数
@@ -159,7 +200,6 @@ function callJSONP(url) {
 function showResult( result ) {
   let output = '';
 
-  //console.log(result);
   console.log(result.Feature);
   for(let i = 0; i < result.Feature.length; i++){
     console.log(result.Feature[i]);
@@ -194,13 +234,16 @@ function showResultW( result ) {
   if(result.ResultInfo.Count > 0){
   let name = result.Feature[0].Name;
   console.log(name);
-  output += "<h2>" + answerp + "の今から60分の天気情報" + "</h2>";
+  output += "<h2>" + answerp + "の今から60分の降水情報" + "</h2>";
   
   for(let i=0; i < result.Feature[0].Property.WeatherList.Weather.length; i++){
-    let weather_type = result.Feature[0].Property.WeatherList.Weather[i].Type;
-    let weather_date = result.Feature[0].Property.WeatherList.Weather[i].Date;
     let weather_rainfall = result.Feature[0].Property.WeatherList.Weather[i].Rainfall;
-    output += weather_type + "/" + weather_date + "/" + weather_rainfall + "<br>";
+    let addtime = 10 * i;
+    if (addtime == 0) {
+      output += "今" + "の降水量は" + weather_rainfall + "mm/h" + "<br>";
+    } else {
+      output += "今から" + addtime + "分後の降水量は" + weather_rainfall + "mm/h" + "<br>";
+    }
   }
   }else{
     output = "not found";
@@ -210,26 +253,29 @@ function showResultW( result ) {
 }
 // ウエイクワードの定義
 var wake_word = "OK.*コンピューター";
-
 // 応答の定義（ハッシュ）    
 var response = {
     ".*あなた.*誰.*":["わたしはアレクサではありません",],
     ".*何歳.*":["え、わたし、何歳にみえますか",],
     ".*元気.*":["元気ですよー",],
     ".*好きな.*食べ物.*":["焼肉です",],
-    ".*かっこいいね.*":["照れますね",],
-    ".*可愛いね.*":["ありがとうございます",],
+    ".*かっこいい.*":["照れますね",],
+    ".*可愛い.*":["ありがとうございます",],
     ".*優秀だね.*":["ありがとうございます",],
     ".*好きな.*人.*":["秘密です",],
     ".*誕生日.*":["1月1日です",],
     ".*身長.*":["160センチメートルです",],
+    ".*本当.*":["本当ですとも",],
     ".*貯金.*":["してません",],
     ".*好きな.*スポーツ.*":["ゴルフです",],
     ".*好きな.*飲み物.*":["リンゴジュースです",],
     ".*こんにちは.*":["ごきげんよう",],
     ".*バン.*":["うわあああああああ",],
+    ".*できる.*":["わあ！すごいですね",],
+    ".*ある.*":["え、本当ですか!",],
     ".*さようなら.*":["ばいばい",],
     ".*バカ.*":["ひどいです",],
+    ".*アホ.*":["ひどいです",],
     ".*間抜け.*":["なんでそんなこと言うんですか",],
     ".*ゆっくり.*喋って.*":["ゆっくりしゃべります",],
     ".*早く.*喋って.*":["早くしゃべります",],
@@ -237,18 +283,18 @@ var response = {
     ".*小さく.*喋って.*":["声を小さくします",],
     ".*高く.*喋って.*":["声を高くします",],
     ".*低く.*喋って.*":["声を低くします",],
-    ".*和歌山.*天気予報.*": ["和歌山県の今から60分の天気情報を表示します",],
-    ".*大阪.*天気予報.*": ["大阪府の今から60分の天気情報を表示します",],
-    ".*京都.*天気予報.*": ["京都府の今から60分の天気情報を表示します",],
-    ".*奈良.*天気予報.*": ["奈良県の今から60分の天気情報を表示します",],
-    ".*兵庫.*天気予報.*": ["兵庫県の今から60分の天気情報を表示します",],
+    ".*和歌山.*降水情報.*": ["和歌山県の今から60分の降水情報を表示します",],
+    ".*大阪.*降水情報.*": ["大阪府の今から60分の降水情報を表示します",],
+    ".*京都.*降水情報.*": ["京都府の今から60分の降水情報を表示します",],
+    ".*奈良.*降水情報.*": ["奈良県の今から60分の降水情報を表示します",],
+    ".*兵庫.*降水情報.*": ["兵庫県の今から60分の降水情報を表示します",],
     ".*和歌山.*天気.*サイト.*": ["和歌山県の天気予報を表示します", "https://weather.yahoo.co.jp/weather/jp/30/"],
     ".*大阪.*天気.*サイト.*": ["大阪府の天気予報を表示します", "https://weather.yahoo.co.jp/weather/jp/27/"],
     ".*京都.*天気.*サイト.*": ["京都府の天気予報を表示します", "https://weather.yahoo.co.jp/weather/jp/26/"],
     ".*奈良.*天気.*サイト.*": ["奈良県の天気予報を表示します", "https://weather.yahoo.co.jp/weather/jp/29/"],
     ".*兵庫.*天気.*サイト.*": ["兵庫県の天気予報を表示します", "https://weather.yahoo.co.jp/weather/jp/28/"]
 };
-    
+
 const startButton = document.querySelector('#startButton'); // 開始ボタン
 const stopButton = document.querySelector('#stopButton'); // 停止ボタン
 const resultOutput = document.querySelector('#resultOutput'); // 結果出力エリア
@@ -272,6 +318,16 @@ asr.lang = "ja-JP"; // 言語（日本語）
 asr.interimResults = true; // 途中結果出力をオン
 asr.continuous = true; // 継続入力をオン
 
+vSlideBarElement.addEventListener('change', function(){
+  tts.volume = vSlideBarElement.value;
+});
+rSlideBarElement.addEventListener('change', function(){
+  tts.rate = rSlideBarElement.value;
+});
+pSlideBarElement.addEventListener('change', function(){
+  tts.pitch = pSlideBarElement.value;
+});
+
 let output = ''; // 出力
 let wakepoint = '';
 // 認識結果が出力されたときのイベントハンドラ
@@ -292,6 +348,19 @@ asr.onresult = function(event){
         let answer;
         let webpage;
         
+        var speak = {
+            "ゆっくりしゃべります":[tts.rate, tts.volume, tts.pitch, -0.2, "", "",],
+            "早くしゃべります":[tts.rate, tts.volume, tts.pitch, 0.5, "", "",],
+            "声を大きくします":[tts.rate, tts.volume, tts.pitch, "", 0.1, "",],
+            "声を小さくします":[tts.rate, tts.volume, tts.pitch, "", -0.1, "",],
+            "声を高くします":[tts.rate, tts.volume, tts.pitch, "", "", 0.2,],
+            "声を低くします":[tts.rate, tts.volume, tts.pitch, "", "", -0.2,],
+            "和歌山県の今から60分の降水情報を表示します":[tts.rate, tts.volume, tts.pitch, "", "", "", "和歌山"],
+            "大阪府の今から60分の降水情報を表示します":[tts.rate, tts.volume, tts.pitch, "", "", "", "大阪"],
+            "京都府の今から60分の降水情報を表示します":[tts.rate, tts.volume, tts.pitch, "", "", "", "京都"],
+            "奈良県の今から60分の降水情報を表示します":[tts.rate, tts.volume, tts.pitch, "", "", "", "奈良"],
+            "兵庫県の今から60分の降水情報を表示します":[tts.rate, tts.volume, tts.pitch, "", "", "", "兵庫"]
+        };
         let keys = Object.keys(response);
         keys.forEach(function(key) {
           let pattern = new RegExp('.*' + key + '.*'); // 正規表現の定義 . 任意の1文字, * 0回以上繰り返し
@@ -302,153 +371,59 @@ asr.onresult = function(event){
             console.log(pattern + " : " + answer);
           }
         });
+        let spkeys = Object.keys(speak);
+        spkeys.forEach(function(key) {
+          let sppattern = new RegExp(key);
+          if(sppattern.test(answer)){
+            spret = speak[answer];
+            tts.rate = spret[0] + spret[3];
+            tts.volume = spret[1] + spret[4];
+            tts.pitch = spret[2] + spret[5];
+            answerp = spret[6];
+            if (typeof answerp != 'undefined'){
+              showAddress(answerp);
+            }
+          }
+        });
 
-        if (answer == "ゆっくりしゃべります") {
-          tts.rate -= 0.2;
-        } else if (answer == "ありがとうございます") {
+        if (answer == "ありがとうございます" || answer == "照れますね") {
+          img = ["pleasure1.jpg", "pleasure2.jpg", "pleasure3.jpg"];
           if (sadp == 1) {
             sadtopleasure();
-            setTimeout(
-              function () {
-                pleasure();
-              }, 
-              "500"
-            );
             sadp = 0;
-            psad = 1;
-            wpleasure = 1;
           } else if (wpleasure != 1){
             pleasuret();
-            setTimeout(
-              function () {
-                pleasure();
-              }, 
-              "1000"
-            );
-            psad = 1;
-            wpleasure = 1;
           }
-        } else if (answer == "照れますね") {
-          if (sadp == 1) {
-            sadtopleasure();
-            setTimeout(
-              function () {
-                pleasure();
-              }, 
-              "500"
-            );
-            sadp = 0;
-            psad = 1;
-            wpleasure = 1;
-          } else if (wpleasure != 1) {
-            pleasuret();
-            setTimeout(
-              function () {
-                pleasure();
-              }, 
-              "1000"
-            );
-            psad = 1;
-            wpleasure = 1;
-          }
-        } else if (answer == "ひどいです") {
+          pleasure();
+          psad = 1;
+          wpleasure = 1;
+        } else if (answer == "ひどいです" || answer == "なんてこと言うんですか") {
+          img = ["sad1.jpg", "sad2.jpg", "sad3.jpg"];
           if (psad == 1) {
             pleasuretosad();
-            setTimeout(
-              function () {
-                sad();
-              }, 
-              "500"
-            );
-            sadp = 1;
             psad = 0;
-            wsad = 1;
           } else if (wsad != 1) {
             sadt();
-            setTimeout(
-              function () {
-                sad();
-              }, 
-              "1000"
-            );
-            sadp = 1;
-            wsad = 1;
           }
-        } else if (answer == "なんてこと言うんですか") {
-          if (psad == 1) {
-            pleasuretosad();
-            setTimeout(
-              function () {
-                sad();
-              }, 
-              "500"
-            );
-            sadp = 1;
-            psad = 0;
-            wsad = 1;
-          } else if (wsad != 1) {
-            sadt();
-            setTimeout(
-              function () {
-                sad();
-              }, 
-              "1000"
-            );
-            sadp = 1;
-            wsad = 1;
-          }
-        } else if (answer == "早くしゃべります") {
-          tts.rate += 0.5;
-        } else if (answer == "声を小さくします") {
-          tts.volume -= 0.1;
-        } else if (answer == "声を大きくします") {
-          tts.volume += 0.1;
-        } else if (answer == "声を低くします") {
-          tts.pitch -= 0.2;
-        } else if (answer == "声を高くします") {
-          tts.pitch += 0.2;
+          sad();
+          sadp = 1;
+          wsad = 1;
         } else if (answer == "ばいばい") {
           wakepoint = "";
-        } else if (answer == "和歌山県の今から60分の天気情報を表示します") {
-          answerp = "和歌山";
           setTimeout(
             function () {
-              showAddress(answerp);
-            }, 
-            "4500"
+              document.getElementById("pic").src = "sleepy.jpg";
+              setTimeout(
+                function () {
+                  document.getElementById("pic").src = "sleep.jpg";
+                }, 
+                "1000"
+              );
+            },
+            "3500"
           );
-        } else if (answer == "大阪府の今から60分の天気情報を表示します") {
-          answerp = "大阪";
-          setTimeout(
-            function () {
-              showAddress(answerp);
-            }, 
-            "4500"
-          );
-        } else if (answer == "京都府の今から60分の天気情報を表示します") {
-          answerp = "京都";
-          setTimeout(
-            function () {
-              showAddress(answerp);
-            }, 
-            "4500"
-          );
-        } else if (answer == "奈良県の今から60分の天気情報を表示します") {
-          answerp = "奈良";
-          setTimeout(
-            function () {
-              showAddress(answerp);
-            }, 
-            "4500"
-          );
-        } else if (answer == "兵庫県の今から60分の天気情報を表示します") {
-          answerp = "兵庫";
-          setTimeout(
-            function () {
-              showAddress(answerp);
-            }, 
-            "4500"
-          );
+        } else if (answer == "うわあああああああ" || answer == "わあ！すごいですね" || answer == "え、本当ですか!") {
+          img = ["surprise1.jpg", "surprise2.jpg", "surprise3.jpg"];
         } else if(typeof answer == 'undefined'){
           answer = "ごめんなさい。わかりません。";
         }
@@ -464,7 +439,23 @@ asr.onresult = function(event){
           asr.start(); // 音声認識を再開
         }
         speechSynthesis.speak(tts); // 再生
-        
+        picChange();
+        setTimeout(
+          function () {
+            if (img[0] == "surprise1.jpg") {
+              if (sadp == 1) {
+                img = ["sad1.jpg", "sad2.jpg", "sad3.jpg"];
+              } else if (psad == 1) {
+                img = ["pleasure1.jpg", "pleasure2.jpg", "pleasure3.jpg"];
+              } else {
+                img = ["normal.jpg", "mouthopen1.jpg", "mouthopen2.jpg"];
+              }
+            }
+            document.getElementById("pic").src = img[0];
+            changetime = 0;
+          }, 
+          "3150"
+        );
       }
     } else { // 結果がまだ未確定のとき
         output_not_final = '<span style="color:#ddd;">' + transcript + '</span>';
@@ -474,12 +465,28 @@ asr.onresult = function(event){
 // 開始ボタンのイベントハンドラ
 startButton.addEventListener('click', function() {
     asr.start();
+    document.getElementById("pic").src = "awake.jpg";
+    setTimeout(
+      function () {
+        document.getElementById("pic").src = img[0];
+      }, 
+      "1000"
+    );
 })
 
 // 停止ボタンのイベントハンドラ
 stopButton.addEventListener('click', function() {
     asr.abort();
     asr.stop();
+    if (document.getElementById("pic").src != "sleep.jpg") {
+      document.getElementById("pic").src = "sleepy.jpg";
+      setTimeout(
+        function () {
+          document.getElementById("pic").src = "sleep.jpg";
+        }, 
+        "1000"
+      );
+    }
 })
 </script>
 
